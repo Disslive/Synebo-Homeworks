@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Curator_is_Dean_of_Department__c</fullName>
+    <externalId>false</externalId>
+    <formula>IF(Curator__r.Id = Department__r.Dean__r.Id, TRUE, FALSE )</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Curator is Dean of Department</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>
