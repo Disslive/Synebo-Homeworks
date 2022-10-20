@@ -1,6 +1,6 @@
 public with sharing class CourseTriggerHandler {
 
-    public void changeNegativeNumber(List<Course__c> newCourses) {
+    public void changeInvalidNumber(List<Course__c> newCourses) {
 
         for(Course__c course : newCourses){
             if(course.Hours__c < 0){

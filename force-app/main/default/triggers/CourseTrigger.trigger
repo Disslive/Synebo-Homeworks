@@ -1,15 +1,11 @@
-trigger CourseTrigger on Course__c (before insert, after insert) {
+trigger CourseTrigger on Course__c (before insert) {
 
     CourseTriggerHandler triggerHandler = new CourseTriggerHandler();
     if(Trigger.isBefore){
 
         if(Trigger.isInsert){
-            triggerHandler.changeNegativeNumber(Trigger.new);
+            triggerHandler.changeInvalidNumber(Trigger.New);
         }
-    } else if(Trigger.isAfter){
-        if(Trigger.isInsert){
-            
-        }
-    }
+    } 
 
 }
