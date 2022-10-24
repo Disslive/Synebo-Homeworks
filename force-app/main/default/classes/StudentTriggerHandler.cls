@@ -1,36 +1,57 @@
 public with sharing class StudentTriggerHandler {
 
-    public void calculateStudentsCount(List<Student__c> newStudents, String operationType){
-        Set<Department__c> departments = new Set<Department__c>();
+    public void calculateStudentsCount(List<Student__c> newStudentsList, Map<Id, Student__c> oldStudentsMap){
         Set<Id> groupIds = new Set<Id>();
-        Integer counter;
-        for(Student__c student_i : newStudents){
+        Map<Id, Integer> departmentStudentsMap = new Map<Id, Integer>();
+        List<Student__c> countingList = newStudentsList;
+        List<Department__c> departmentsToUpdateList = new List<Department__c>();
+        if(newStudentsList == null){
+            countingList = oldStudentsMap.values();
+        }
+
+        for(Student__c student_i : countingList){
             groupIds.add(student_i.Group__c);
         }
         
-        List<Group__c> groupsList = [SELECT Id, Department__c, Department__r.Total_Students__c FROM Group__c WHERE Id IN :groupIds];
+        Map<Id, Group__c> groupsMap = new Map<Id, Group__c> ([SELECT Id, Department__c, Department__r.Total_Students__c 
+                                                            FROM Group__c  
+                                                            WHERE Id IN :groupIds]);
+        Map<Id, Department__c> oldDepartmentStudentsMap = new Map<Id, Department__c>([SELECT Id, Total_Students__c 
+                                                                                    FROM Department__c 
+                                                                                    WHERE Id IN (SELECT Department__c 
+                                                                                                FROM Group__c 
+                                                                                                WHERE Id IN :groupIds)]);
+        //If Active__c become false or record is deleted counter is (-1), if inserting or Active__c becoming true counter is (1)
+        for(Student__c student_i : countingList){
+            
+            Group__c returnedGroup= groupsMap.get(student_i.Group__c);
+            if((newStudentsList == null && student_i.Active__c == true) || 
+            (student_i.Active__c != oldStudentsMap.get(student_i.Id).Active__c && student_i.Active__c == false)){
+                
+                returnedGroup.Department__r.Total_Students__c -=1;
+            } else if((oldStudentsMap == null || student_i.Active__c != oldStudentsMap.get(student_i.Id).Active__c) && student_i.Active__c == true){
 
-        if(operationType.contains('DELETE')){
-            counter = -1;
-        } else{
-            counter = 1;
+                returnedGroup.Department__r.Total_Students__c +=1;
+            }
+
+            groupsMap.put(student_i.Group__c, returnedGroup);
+            departmentStudentsMap.put(returnedGroup.Department__c, (Integer)returnedGroup.Department__r.Total_Students__c);
         }
+        //Compare old values with new ones and if they changed add to updating list
+        for(Id key : oldDepartmentStudentsMap.keySet()){
 
-        for(Student__c student_i : newStudents){
-            for(Group__c group_i : groupsList){
-                if(student_i.Group__c == group_i.Id){
-                    group_i.Department__r.Total_Students__c +=counter;
-                }
+            Department__c department = oldDepartmentStudentsMap.get(key);
+            Integer calculatedStudentsAmount = departmentStudentsMap.get(key);
+            if(department.Total_Students__c != calculatedStudentsAmount){
+
+                department.Total_Students__c = calculatedStudentsAmount;
+                departmentsToUpdateList.add(department);
             }
         }
 
-        for(Group__c group_i : groupsList){
-            departments.add(new Department__c(Id = group_i.Department__c, Total_Students__c = group_i.Department__r.Total_Students__c));
+        if(!departmentsToUpdateList.isEmpty()){
+            update departmentsToUpdateList;
         }
-        List<Department__c> departmentsList = new List<Department__c>();
-        departmentsList.addAll(departments);
-        update departmentsList;
-
     }
 
 }
