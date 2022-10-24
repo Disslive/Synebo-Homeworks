@@ -23,15 +23,22 @@ public with sharing class StudentTriggerHandler {
                                                                                                 WHERE Id IN :groupIds)]);
         //If Active__c become false or record is deleted counter is (-1), if inserting or Active__c becoming true counter is (1)
         for(Student__c student_i : countingList){
-            
+
             Group__c returnedGroup= groupsMap.get(student_i.Group__c);
-            if((newStudentsList == null && student_i.Active__c == true) || 
-            (student_i.Active__c != oldStudentsMap.get(student_i.Id).Active__c && student_i.Active__c == false)){
+            if(newStudentsList == null && student_i.Active__c == true){
                 
                 returnedGroup.Department__r.Total_Students__c -=1;
-            } else if((oldStudentsMap == null || student_i.Active__c != oldStudentsMap.get(student_i.Id).Active__c) && student_i.Active__c == true){
+            } else if(oldStudentsMap == null && student_i.Active__c == true){
 
                 returnedGroup.Department__r.Total_Students__c +=1;
+            } else{
+                if(student_i.Active__c != oldStudentsMap.get(student_i.Id).Active__c){
+                    if(student_i.Active__c == true){
+                        returnedGroup.Department__r.Total_Students__c +=1;
+                    } else {
+                        returnedGroup.Department__r.Total_Students__c -=1;
+                    }
+                }
             }
 
             groupsMap.put(student_i.Group__c, returnedGroup);
