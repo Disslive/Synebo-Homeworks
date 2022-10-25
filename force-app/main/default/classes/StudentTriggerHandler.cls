@@ -31,8 +31,10 @@ public with sharing class StudentTriggerHandler {
             } else if(oldStudentsMap == null && student_i.Active__c == true){
 
                 returnedGroup.Department__r.Total_Students__c +=1;
-            } else{
+            } else if(newStudentsList != null && oldStudentsMap != null){
+
                 if(student_i.Active__c != oldStudentsMap.get(student_i.Id).Active__c){
+                    
                     if(student_i.Active__c == true){
                         returnedGroup.Department__r.Total_Students__c +=1;
                     } else {
