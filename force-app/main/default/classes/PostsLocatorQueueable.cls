@@ -1,6 +1,6 @@
 public with sharing class PostsLocatorQueueable implements Queueable, Database.AllowsCallouts{
    
-    private static String ENDPOINT_BASE = 'https://jsonplaceholder.typicode.com';
+    private static String ENDPOINT_BASE = 'callout:JSONplaceholder';
 
     private class Post {
         public Integer userId;
@@ -24,6 +24,7 @@ public with sharing class PostsLocatorQueueable implements Queueable, Database.A
             
             upsert postsToUpsertList Post_Id__c;
         }
+        System.enqueueJob(new CommentsLocatorQueueable());
     }
 
     private static List<Post> getAllPostsCallout(){

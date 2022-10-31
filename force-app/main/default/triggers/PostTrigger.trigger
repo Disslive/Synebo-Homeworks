@@ -1,8 +1,8 @@
-trigger PostTrigger on Post__c (before update) {
+trigger PostTrigger on Post__c (before delete) {
 
     if(Trigger.isBefore){
-        if(Trigger.isUpdate){
-            PostTriggerHandler.updatePosts(Trigger.New, Trigger.oldMap);
+        if(Trigger.isDelete){
+            System.enqueueJob(new PostsLocatorQueueable());
         }
     }
 
