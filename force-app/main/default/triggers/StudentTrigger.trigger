@@ -8,7 +8,7 @@ trigger StudentTrigger on Student__c (after insert, after delete, after update) 
         } else if(Trigger.isDelete){
             triggerHandler.calculateStudentsCount(null, Trigger.oldMap);
         } else if(Trigger.isUpdate){
-            triggerHandler.calculateStudentsCount(Trigger.New, Trigger.oldMap);
+            triggerHandler.calculateUpdatedStudents(Trigger.New, Trigger.oldMap);
         }
     }
 

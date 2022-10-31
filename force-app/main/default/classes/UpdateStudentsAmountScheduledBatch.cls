@@ -21,7 +21,7 @@ public with sharing class UpdateStudentsAmountScheduledBatch implements Database
                 departmentsToUpdateList.add(dep);
             }
         }
-
+        
         if(!departmentsToUpdateList.isEmpty()){
             update departmentsToUpdateList;
         }
