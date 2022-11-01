@@ -114,7 +114,9 @@ global class StudentsRestService {
         RestResponse res = RestContext.response;
         String studentId = req.requestURI.substring(req.requestURI.lastIndexOf('/')+1);
         try{
-            Student__c student = new Student__c(Id = studentId);
+            Student__c student = [SELECT Id 
+                                FROM Student__c
+                                WHERE Id = :studentId];
             delete student;
             res.statuscode = 200;
             res.responseBody = Blob.valueOf('Student was deleted');
