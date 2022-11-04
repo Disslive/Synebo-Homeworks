@@ -17,11 +17,12 @@ public with sharing class CommentsLocatorQueueable implements Queueable, Databas
         if(returnedCommentsList!=null){
 
             for(Comment comment_i : returnedCommentsList){
-               commentsToUpsert.add(new Comment__c(Body__c = comment_i.body,
+                Post__c post = new Post__c(Post_Id__c = comment_i.postId);
+                commentsToUpsert.add(new Comment__c(Body__c = comment_i.body,
                                                     Email__c = comment_i.email,
                                                     CommentId__c = comment_i.id,
                                                     Authors_name__c = comment_i.name,
-                                                    Post_Id__c = comment_i.postId));
+                                                    Post__r = post));
             }
 
             upsert commentsToUpsert CommentId__c;
