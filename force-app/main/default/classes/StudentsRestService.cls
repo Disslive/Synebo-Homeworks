@@ -1,6 +1,8 @@
 @RestResource(urlMapping ='/students/*')
 global class StudentsRestService {
-   
+
+   public class EmptyException extends Exception {}
+
     private class StudentWrapper{
         Boolean active;
         String phone;
@@ -44,10 +46,12 @@ global class StudentsRestService {
             List<Student__c> studentsList = [SELECT Active__c, Group__c, Phone_Number__c, Student_Email__c, Student_Name__c, Student_Surname__c
                                             FROM Student__c
                                             WHERE Group__r.Name = :groupName];
-
+            if(studentsList.isEmpty()){
+                throw new EmptyException('No students in group or group is not exist');
+            }
             res.statuscode = 200;
             res.responseBody = Blob.valueOf(JSON.serialize(wrapper.getStudentWrapperList(studentsList)));
-        } catch(Exception e){
+        } catch(EmptyException e){
             res.statuscode = 400;
             res.responseBody = Blob.valueOf(e.getMessage());
         }
@@ -70,7 +74,7 @@ global class StudentsRestService {
                                                         Student_Surname__c = student.surname);
             insert studentToInsert;
             res.statuscode = 200;
-            res.responseBody = Blob.valueOf('Student was inserted with id ' + studentToInsert.Id);
+            res.responseBody = Blob.valueOf(studentToInsert.Id);
         }catch(DmlException e){
             res.statuscode = 400;
             res.responseBody = Blob.valueOf(e.getMessage());
@@ -99,7 +103,7 @@ global class StudentsRestService {
             update studentToUpdate;
             res.statuscode = 200;
             res.responseBody = Blob.valueOf('Student was updated');
-        } catch (DmlException e){
+        } catch (Exception e){
             res.statuscode = 400;
             res.responseBody = Blob.valueOf(e.getMessage());
         }
@@ -120,7 +124,7 @@ global class StudentsRestService {
             delete student;
             res.statuscode = 200;
             res.responseBody = Blob.valueOf('Student was deleted');
-        } catch(DmlException e){
+        } catch(Exception e){
             res.statuscode = 400;
             res.responseBody = Blob.valueOf(e.getMessage());
         }

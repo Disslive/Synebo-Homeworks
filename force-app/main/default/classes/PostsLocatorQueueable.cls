@@ -24,7 +24,10 @@ public with sharing class PostsLocatorQueueable implements Queueable, Database.A
             
             upsert postsToUpsertList Post_Id__c;
         }
-        System.enqueueJob(new CommentsLocatorQueueable());
+
+        if(!Test.isRunningTest()){
+            System.enqueueJob(new CommentsLocatorQueueable());
+        }
     }
 
     private static List<Post> getAllPostsCallout(){
