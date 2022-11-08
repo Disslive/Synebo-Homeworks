@@ -11,15 +11,18 @@ public with sharing class UpdateStudentsAmountScheduledBatch implements Database
                                                                                 FROM Student__c 
                                                                                 WHERE Active__c = true AND Group__r.Department__c IN :scope
                                                                                 GROUP BY Group__r.Department__c]);
-
+        
         for(Department__c dep : scope){
-
+            Integer count = 0;
             AggregateResult aggrResult = studentsCountMap.get(dep.Id);
-            Integer count = (Integer)aggrResult.get('totalStudents');
+            if(aggrResult!=null){
+                count = (Integer)aggrResult.get('totalStudents'); 
+            } 
+            
             if(dep.Total_Students__c != count){
                 dep.Total_Students__c = count;
                 departmentsToUpdateList.add(dep);
-            }
+            } 
         }
         
         if(!departmentsToUpdateList.isEmpty()){

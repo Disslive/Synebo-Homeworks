@@ -9,7 +9,7 @@ public class UpdateStudentsAmountScheduledBatchTest {
         insert departments;
 
         for(Department__c dep_i : departments){
-            groups.addAll(TestDataFactory.getGroupsForDepartment(dep_i.Id, 2));
+            groups.addAll(TestDataFactory.getGroupsForDepartment(dep_i.Id, 20));
         }
         insert groups;
 
@@ -28,8 +28,8 @@ public class UpdateStudentsAmountScheduledBatchTest {
 
         List<Department__c> departments = [SELECT Id, Total_Students__c
                                             FROM Department__c];
-        System.assertEquals(30, departments[0].Total_Students__c, 'Wrong total students calculation for 1 department');
-        System.assertEquals(30, departments[1].Total_Students__c, 'Wrong total students calculation for 2 department');
+        System.assertEquals(300, departments[0].Total_Students__c, 'Wrong total students calculation for 1 department');
+        System.assertEquals(300, departments[1].Total_Students__c, 'Wrong total students calculation for 2 department');
     }
 
     @isTest

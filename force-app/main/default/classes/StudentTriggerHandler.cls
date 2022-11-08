@@ -88,12 +88,15 @@ public with sharing class StudentTriggerHandler {
                                                                                 GROUP BY Group__r.Department__c]);
 
         for(Id depId : departmentIds){
-
+            Integer newCount = 0;
+            Integer oldCount = 0;
             AggregateResult aggrResult = studentsCountMap.get(depId);
-            Integer newCount = Integer.valueOf(aggrResult.get('totalStudents'));
-            Integer oldCount = Integer.valueOf(aggrResult.get('oldCount'));
-
-            if(newCount!=oldCount){
+            if(aggrResult != null){
+                newCount = Integer.valueOf(aggrResult.get('totalStudents'));
+                oldCount = Integer.valueOf(aggrResult.get('oldCount'));
+            }
+            
+            if(newCount!=oldCount || newCount == 0){
                 departmentsToUpdateList.add(new Department__c(Id = depId, Total_Students__c = newCount));
             }
         }
