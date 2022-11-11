@@ -26,9 +26,11 @@
                 }
                 component.set("v.rows", result.responseObj);
                 component.set("v.error", undefined);
+                this.showToastMessage('Success!','Data fetched', 'success');
             } else {
                 component.set("v.rows", undefined);
                 component.set("v.error", result.responseObj);
+                this.showToastMessage('Error!','Data wasn`t fetched', 'error');
             }       
         });
 
